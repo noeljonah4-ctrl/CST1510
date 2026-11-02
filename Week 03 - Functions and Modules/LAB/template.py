@@ -48,7 +48,7 @@ over_limit_count = 0
 
 # Keep checking records until the user enters "quit".
 while True:
-    label = input("Enter a label (or 'quit' to finish): ").strip()
+    label = input("Enter a label (or 'quit' to finish): ")
     if label.lower() == "quit":
         break
 
