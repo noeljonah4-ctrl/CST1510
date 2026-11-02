@@ -1,8 +1,8 @@
 """RECORD CHECK"""
 
-label = input("Enter a label: ")
-first = float(input("Enter the first number: "))
-second = float(input("Enter the second number: "))
+label = input("Enter a source IP: ")
+first = float(input("Enter the failed logins: "))
+second = float(input("Enter the total attempts: "))
 
 # Calculate the missing values.
 difference = first - second
