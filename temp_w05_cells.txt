@@ -1,0 +1,190 @@
+### CELL 22
+# D9
+class Record:
+    def __init__(self, label, value, limit):
+        self.label = label
+        self.value = value
+        self.limit = limit
+
+    def percent(self):
+        """Return the value as a percentage of the limit."""
+        return (self.value / self.limit) * 100
+
+    def status(self):
+        """Return OVER LIMIT, WARNING or OK for this record."""
+        p = self.percent()
+        if p >= 100:
+            return "OVER LIMIT"
+        elif p >= 90:
+            return "WARNING"
+        else:
+            return "OK"
+
+
+records = [
+    Record("R-001", 87.0, 100.0),
+    Record("R-002", 120.0, 100.0),
+    Record("R-003", 45.0, 100.0),
+]
+
+for r in records:
+    print(r.label, r.status())
+
+### CELL 23
+### D10. A class-level counter
+
+1. Define a new, small class `Counted`. Directly under the `class` line (not inside `__init__`),
+   add `count = 0`.
+2. In `__init__(self)`, add 1 to `Counted.count`.
+3. Create three `Counted` objects, then print `Counted.count`.
+
+**Expected output:** `3`
+
+Add a comment explaining why the count is shared by every object instead of each object having its own.
+
+### CELL 24
+# D10
+class Counted:
+    count = 0
+
+    def __init__(self):
+        Counted.count += 1
+
+c1 = Counted()
+c2 = Counted()
+c3 = Counted()
+
+print(Counted.count)  # 3
+
+### CELL 25
+### D11. Load objects from a file
+
+`records_sample.txt` (in this `LAB` folder) has one record per line, like `R-001,87,100`.
+
+1. Write `load_records(path)` that reads the file and returns a list of `Record` objects
+   (convert `value` and `limit` with `float()`).
+2. Loop over the list and print each record's label and status.
+
+**Expected output:** the same three lines as D9.
+
+### CELL 26
+# D11
+class Record:
+    def __init__(self, label, value, limit):
+        self.label = label
+        self.value = value
+        self.limit = limit
+
+    def percent(self):
+        """Return the value as a percentage of the limit."""
+        return (self.value / self.limit) * 100
+
+    def status(self):
+        """Return OVER LIMIT, WARNING or OK for this record."""
+        p = self.percent()
+        if p >= 100:
+            return "OVER LIMIT"
+        elif p >= 90:
+            return "WARNING"
+        else:
+            return "OK"
+
+
+def load_records(path):
+    """Read label,value,limit lines from a file and return a list of Record objects."""
+    records = []
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            label, value, limit = line.split(",")
+            records.append(Record(label, float(value), float(limit)))
+    return records
+
+
+records = load_records("records_sample.txt")
+
+for r in records:
+    print(r.label, r.status())
+
+### CELL 27
+---
+## Challenge · for a first
+
+*These combine several ideas from this week. There are no step-by-step instructions.*
+
+### CELL 28
+### C1. Count the records over the limit
+
+Add a method `is_over(self)` to `Record` that returns `True` or `False`. Load `records_sample.txt` with
+`load_records` from D11, use `is_over()` to count how many records are over their limit, and print a
+one-line summary.
+
+**Expected output:** `1 of 3 records are OVER LIMIT`
+
+### CELL 29
+# C1
+class Record:
+    def __init__(self, label, value, limit):
+        self.label = label
+        self.value = value
+        self.limit = limit
+
+    def percent(self):
+        """Return the value as a percentage of the limit."""
+        return (self.value / self.limit) * 100
+
+    def status(self):
+        """Return OVER LIMIT, WARNING or OK for this record."""
+        p = self.percent()
+        if p >= 100:
+            return "OVER LIMIT"
+        elif p >= 90:
+            return "WARNING"
+        else:
+            return "OK"
+
+    def is_over(self):
+        """Return True if the value is greater than the limit, otherwise False."""
+        return self.value > self.limit
+
+
+def load_records(path):
+    """Read label,value,limit lines from a file and return a list of Record objects."""
+    records = []
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            label, value, limit = line.split(",")
+            records.append(Record(label, float(value), float(limit)))
+    return records
+
+
+records = load_records("records_sample.txt")
+
+over_count = 0
+for r in records:
+    if r.is_over():
+        over_count += 1
+
+print(f"{over_count} of {len(records)} records are OVER LIMIT")
+
+### CELL 30
+### C2. An account that locks
+
+Write a class `Account` with a `username` and a count of failed logins that starts at 0.
+It has two methods:
+
+- `fail(self)`: adds 1 to the failed logins
+- `locked(self)`: returns `True` if there have been 3 or more failed logins
+
+**Test it:**
+
+| Code | Expected output |
+|---|---|
+| an account for `"anna"` with `.fail()` called 3 times, then `print(anna.locked())` | `True` |
+| an account for `"ben"` with `.fail()` called once, then `print(ben.locked())` | `False` |
+
